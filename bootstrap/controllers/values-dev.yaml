@@ -1,0 +1,16 @@
+alb:
+  enabled: true
+  version: 1.15.0
+  clusterName: eks
+  vpcId: vpc-050c5148827881443
+
+argo:
+  hostname: jmonda.com
+
+gateway_api:
+  enabled: true
+  version: 1.4.0
+
+kro:
+  enabled: true
+  version: 0.7.1

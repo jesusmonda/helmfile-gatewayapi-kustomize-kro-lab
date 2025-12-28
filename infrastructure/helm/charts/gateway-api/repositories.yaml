@@ -1,3 +1,0 @@
-repositories:
- - name: gateway-api
-   url: https://wiremind.github.io/wiremind-helm-charts

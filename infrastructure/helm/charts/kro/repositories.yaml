@@ -1,4 +1,0 @@
-repositories:
- - name: kro
-   url: oci://registry.k8s.io/kro/charts/kro
-   oci: true

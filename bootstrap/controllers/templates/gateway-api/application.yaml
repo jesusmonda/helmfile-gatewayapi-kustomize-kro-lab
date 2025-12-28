@@ -1,0 +1,33 @@
+{{ if .Values.gateway_api.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: controller-gateway-helm
+  namespace: argo
+spec:
+  project: default
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  sources:
+    - repoURL: https://wiremind.github.io/wiremind-helm-charts
+      chart: gateway-api-crds
+      targetRevision: {{ .Values.gateway_api.version }}
+      helm:
+        releaseName: gateway-api
+        values: |
+          
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+{{ end }}

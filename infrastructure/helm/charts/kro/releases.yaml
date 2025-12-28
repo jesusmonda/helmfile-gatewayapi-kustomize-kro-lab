@@ -1,6 +1,0 @@
-releases:
-- name: kro
-  namespace: kube-system
-  chart: oci://registry.k8s.io/kro/charts/kro
-  version: 0.7.1
-  verify: false

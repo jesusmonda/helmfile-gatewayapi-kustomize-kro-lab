@@ -1,0 +1,11 @@
+alb:
+  enabled: true
+
+argo:
+  hostname: jmonda.com
+
+gateway_api:
+  enabled: true
+  subnets:
+    - subnet-0390d8f395fd0f9bf
+    - subnet-0bf7ac29bffc2d0b2

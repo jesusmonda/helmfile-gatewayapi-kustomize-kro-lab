@@ -1,0 +1,31 @@
+{{ if .Values.kro.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: controller-kro-helm
+  namespace: argo
+
+spec:
+  project: default
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: oci://registry.k8s.io/kro/charts/kro
+    targetRevision: {{ .Values.kro.version }}
+    path: .
+    helm:
+      releaseName: kro
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+{{ end }}

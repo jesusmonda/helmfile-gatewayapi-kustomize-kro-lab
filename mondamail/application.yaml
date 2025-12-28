@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mondamail
+  labels:
+    shared-gateway-access: "true"
+---
+apiVersion: kro.run/v1alpha1
+kind: Mondamail
+metadata:
+  name: mondamail
+  namespace: mondamail
+spec:
+  deployment:
+    replicas: 1
+    image: nginx:latest
+  configuration:
+    hostname:
+      - mondamail.com
+    subnets:
+      - identifier: subnet-0390d8f395fd0f9bf
+      - identifier: subnet-0bf7ac29bffc2d0b2

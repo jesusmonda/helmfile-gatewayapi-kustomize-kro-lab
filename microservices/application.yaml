@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: microservices
+  namespace: argo
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+  sources:
+    - repoURL: https://github.com/jesusmonda/helmfile-gatewayapi-kustomize-kro-lab.git
+      targetRevision: main
+      path: mondamail
+      directory:
+        include: 'application.yaml'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2

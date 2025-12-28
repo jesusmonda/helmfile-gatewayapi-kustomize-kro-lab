@@ -1,0 +1,64 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: argo
+  namespace: argo
+spec:
+  routeConfigurations:
+    - routeIdentifier:
+        kind: HTTPRoute
+        name: argo-http
+        namespace: argo
+      targetGroupProps:
+        healthCheckConfig:
+          healthCheckPath: /
+          healthCheckProtocol: HTTP
+  targetReference:
+    name: argo-argocd-server
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argo-http
+  namespace: argo
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: alb
+      namespace: default
+      sectionName: http
+  hostnames:
+    - {{ .Values.argo.hostname }}
+  rules:
+    - filters:
+      - type: RequestRedirect
+        requestRedirect:
+          scheme: https
+          statusCode: 301
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argo-https
+  namespace: argo
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: alb
+      namespace: default
+      sectionName: https
+  hostnames:
+    - {{ .Values.argo.hostname }}
+  rules:
+    - backendRefs:
+      - name: argo-argocd-server
+        namespace: argo
+        port: 443
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

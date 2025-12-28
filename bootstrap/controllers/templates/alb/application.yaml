@@ -1,0 +1,42 @@
+{{ if .Values.alb.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: controller-alb-helm
+  namespace: argo
+
+spec:
+  project: default
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  sources:
+    - repoURL: https://aws.github.io/eks-charts
+      chart: aws-load-balancer-controller
+      targetRevision: {{ .Values.alb.version }}
+      helm:
+        releaseName: aws-load-balancer-controller
+        values: |
+          clusterName: {{ .Values.alb.clusterName }}
+          serviceAccount:
+            create: false
+            name: aws-load-balancer-controller
+          region: eu-west-1
+          vpcId: {{ .Values.alb.vpcId }}
+          controllerConfig:
+            featureGates:
+              NLBGatewayAPI: true
+              ALBGatewayAPI: true
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+{{ end }}
